@@ -34,7 +34,7 @@ benchlist = [
   #gbackpath + " " + gflags + " " + extraflags + " -Dlibgraal.WriteableCodeCache=true " + commonsuffix,
   #gbackpath + " " + gflags + " " + extraflags + " -Dgraal.LSRAOptimization=true  " + commonsuffix,
   #gbackpath + " " + gflags + " " + extraflags + " -Dgraal.VectorPolynomialIntrinsics=true -Dgraal.SIMDVectorizationSingletons=true -Dgraal.SIMDVectorizationDirectLoadStore=true " + commonsuffix
-] * 3
+] * 12
 
 
 #Use seperate paths, or a single path with a length matching the number of commands you are running
