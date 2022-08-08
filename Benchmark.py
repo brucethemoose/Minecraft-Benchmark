@@ -39,13 +39,16 @@ memory = r''' -Xms4G -Xmx4G'''
 #Forge/Fabric packs only need "java + arguments", as their jars are automatically found
 
 javalist = [
-  gbackpath + memory + graal
+  gbackpath + memory + graal + lpages,
+  gbackpath + memory + graal + lpages
 ]
 
 #List of Minecraft paths. The length of this list should be the same as the java list
+#Forge/Fabric
 pathlist = [
-  atm7
-] * len(javalist)
+  atm7,
+  vev
+]
 
 
 #----Other Options-----
@@ -53,11 +56,12 @@ pathlist = [
 nogui = False
 carpet = 0 #number of simulated carpet players
 #Fabric
-#chunkgen_command = r"chunky start"                #Chunk generation command to use
-#chunkgen_expect =  r"[Chunky] Task finished for"  #String to look for when chunk generation is finished
+fabric_chunkgen_command = r"chunky start"                #Chunk generation command to use
+fabric_chunkgen_expect =  r"[Chunky] Task finished for"  #String to look for when chunk generation is finished
 #Forge
-chunkgen_command = r"forge generate 0 0 0 3000"
-chunkgen_expect =  r"Finished generating"
+forge_chunkgen_command = r"forge generate 0 0 0 3000"
+forge_chunkgen_expect =  r"Finished generating"
+
 startuptimeout= 600
 chunkgentimeout = 1000
 iterations = 1
@@ -79,8 +83,8 @@ def benchmark(java, mcpath, carpet = 0):
   spark = False
   chunkgentime = 0
   startuptime = 0
-  fabricpath = ""
-  forgepath = ""
+  chunkgen_command = ""
+  chunkgen_expect = ""
   os.chdir(mcpath)
   plat = "Linux"
   if "Windows" in platform.system():
@@ -91,7 +95,7 @@ def benchmark(java, mcpath, carpet = 0):
 
   #Start building the Minecraft command
   if plat == "Linux":
-    command = "nice -n 20 " + java
+    command = "nice -n -18 " + java
   else:
     command = java
 
@@ -100,6 +104,8 @@ def benchmark(java, mcpath, carpet = 0):
   for f in d:
     if "fabric-" in os.path.basename(f):
       if debug: print("Found Fabric: " + f)
+      chunkgen_command = fabric_chunkgen_command
+      chunkgen_expect = fabric_chunkgen_expect
       command = command + " -jar " + os.path.basename(f)
       #Delete chunky config if found
       if os.path.isfile(r"config/chunky.json"):
@@ -111,6 +117,8 @@ def benchmark(java, mcpath, carpet = 0):
   d = glob.glob(r"libraries/net/minecraftforge/forge/*/win_args.txt")
   if len(d) == 1:
     if debug: print("Found Forge" + d[0])
+    chunkgen_command = forge_chunkgen_command
+    chunkgen_expect = forge_chunkgen_expect
     if plat == "Linux":
       command = command + " @" + os.path.normpath(os.path.join(os.path.dirnamme(d[0]), r"unix_args.txt")) + ngui + r' "$@"'
     else:
@@ -158,10 +166,13 @@ def benchmark(java, mcpath, carpet = 0):
     if debug: print("Starting server: " + command)
     time.sleep(0.01)
     if plat == "Windows":
-      for proc in psutil.process_iter(['pid', 'name']):
-        if "java" in str(proc.name):
-          if debug: print("Setting Priority")
-          proc.nice(psutil.HIGH_PRIORITY_CLASS)
+      try:
+        for proc in psutil.process_iter(['pid', 'name']):
+          if "java" in str(proc.name):
+            if debug: print("Setting Priority")
+            proc.nice(psutil.HIGH_PRIORITY_CLASS)
+      except:
+        print("Failed to set process priority, please run this benchmark as an admin!")
     index = child.expect_exact(pattern_list=[r'''! For help, type "help"''', 'Minecraft Crash Report', pexpect.EOF, pexpect.TIMEOUT], timeout=startuptimeout)
     if index == 0:
       if debug: print("Server started")
