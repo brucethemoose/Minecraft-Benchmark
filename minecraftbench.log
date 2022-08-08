@@ -208,3 +208,91 @@ INFO:root:Path: C:/Games/atm7
 INFO:root:Command: C:/Games/PolyMC-Windows-Portable-1.4.0/graalvm-ee-java17-22.2.0/bin/java.exe -server -Xms4G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=1 -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.TuneInlinerExploration=1 -Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=false -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=false -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dgraal.EarlyGVN=true -Dgraal.StripMineCountedLoops=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true --add-modules jdk.incubator.vector -XX:+UseFMA -XX:+UseLargePages -XX:LargePageSizeInBytes=2m @libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
 WARNING:root:Startup Time: 213.4924352169037
 WARNING:root:Chunk Generation Time:275.7380003929138
+INFO:root:Benchark started at 2022-08-07 20:04:43.082832
+INFO:root:Path: C:/Games/atm7
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms4G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 @libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Path: C:/Games/atm7
+INFO:root:Command: C:/Users/Alpha/Downloads/OpenJDK17U-jre_x64_windows_hotspot_17.0.4_8/jdk-17.0.4+8-jre/bin/java.exe -server -Xms4G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 @libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Benchark started at 2022-08-07 20:10:42.067697
+INFO:root:Path: C:/Games/atm7
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms4G -Xmx8G@libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Benchark started at 2022-08-07 20:11:19.914669
+INFO:root:Path: C:/Games/atm7
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms4G -Xmx8G@libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Benchark started at 2022-08-07 20:11:42.849148
+INFO:root:Path: C:/Games/atm7
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms4G -Xmx8G @libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Benchark started at 2022-08-07 20:59:27.290389
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms2G -Xmx8G @libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/OpenJDK17U-jre_x64_windows_hotspot_17.0.4_8/jdk-17.0.4+8-jre/bin/java.exe -server -Xms2G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 @libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms2G -Xmx8G -Xgcpolicy:balanced @libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/graalvm-ee-java17-windows-amd64-22.1.0/graalvm-ee-java17-22.1.0/bin/java.exe -server -Xms2G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=1 -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.TuneInlinerExploration=1 -Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true --add-modules jdk.incubator.vector -XX:+UseFMA -XX:+UseLargePages -XX:LargePageSizeInBytes=2m @libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Benchark started at 2022-08-07 21:00:58.901337
+INFO:root:Benchark started at 2022-08-07 21:03:09.087792
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms2G -Xmx8G  -jar fabric-0.10.2-0.14.8.jar nogui
+WARNING:root:Startup Time: 158.6156771183014
+WARNING:root:Chunk Generation Time:TIMEOUT
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/OpenJDK17U-jre_x64_windows_hotspot_17.0.4_8/jdk-17.0.4+8-jre/bin/java.exe -server -Xms2G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1  -jar fabric-0.10.2-0.14.8.jar nogui
+WARNING:root:Startup Time: 103.75528264045715
+WARNING:root:Chunk Generation Time:TIMEOUT
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms2G -Xmx8G -Xgcpolicy:balanced  -jar fabric-0.10.2-0.14.8.jar nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Benchark started at 2022-08-07 21:44:45.479272
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms2G -Xmx8G  -jar fabric-0.10.2-0.14.8.jar nogui
+WARNING:root:Startup Time: 162.03429222106934
+WARNING:root:Chunk Generation Time:TIMEOUT
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/OpenJDK17U-jre_x64_windows_hotspot_17.0.4_8/jdk-17.0.4+8-jre/bin/java.exe -server -Xms2G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1  -jar fabric-0.10.2-0.14.8.jar nogui
+WARNING:root:Startup Time: 103.84647345542908
+WARNING:root:Chunk Generation Time:TIMEOUT
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms2G -Xmx8G -Xgcpolicy:balanced  -jar fabric-0.10.2-0.14.8.jar nogui
+WARNING:root:Startup Time: STOPPED
+WARNING:root:Chunk Generation Time:STOPPED
+INFO:root:Benchark started at 2022-08-07 22:24:42.005446
+INFO:root:Benchark started at 2022-08-07 22:25:21.981456
+INFO:root:Benchark started at 2022-08-07 22:31:39.842222
+INFO:root:Benchark started at 2022-08-07 22:34:04.556801
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms2G -Xmx8G -jar fabric-0.10.2-0.14.8.jar
+WARNING:root:Startup Time: 157.86257934570312
+WARNING:root:Chunk Generation Time:282.28521633148193
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/OpenJDK17U-jre_x64_windows_hotspot_17.0.4_8/jdk-17.0.4+8-jre/bin/java.exe -server -Xms2G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -jar fabric-0.10.2-0.14.8.jar
+WARNING:root:Startup Time: 105.61187696456909
+WARNING:root:Chunk Generation Time:181.41288471221924
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe -server -Xms2G -Xmx8G -Xgcpolicy:balanced -jar fabric-0.10.2-0.14.8.jar
+WARNING:root:Startup Time: 178.51572346687317
+WARNING:root:Chunk Generation Time:350.617693901062
+INFO:root:Path: C:/Games/vevserver
+INFO:root:Command: C:/Users/Alpha/Downloads/graalvm-ee-java17-windows-amd64-22.1.0/graalvm-ee-java17-22.1.0/bin/java.exe -server -Xms2G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=1 -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.TuneInlinerExploration=1 -Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true --add-modules jdk.incubator.vector -XX:+UseFMA -XX:+UseLargePages -XX:LargePageSizeInBytes=2m -jar fabric-0.10.2-0.14.8.jar
+WARNING:root:Startup Time: 102.66874074935913
+WARNING:root:Chunk Generation Time:148.04998016357422

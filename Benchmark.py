@@ -1,60 +1,67 @@
-import os,time,shutil,glob,logging,datetime
+import os,time,shutil,glob,logging,datetime,sys,traceback
 import signal
+import platform
 import pexpect
 from pexpect import popen_spawn
 
-#Put various testing strings here
+
+#----Minecraft Paths-----
+
+atm7 = r"C:/Games/atm7"
+
+vev = r"C:/Games/vevserver"
+
+#----Java Paths-----
 
 graalpath = r"C:/Games/PolyMC-Windows-Portable-1.4.0/graalvm-ee-java17-22.2.0/bin/java.exe"
 
 jdkpath = r"C:/Users/Alpha/Downloads/OpenJDK17U-jre_x64_windows_hotspot_17.0.4_8/jdk-17.0.4+8-jre/bin/java.exe"
 
-commonsuffix = r"@libraries/net/minecraftforge/forge/1.18.2-40.1.60/win_args.txt %* --nogui"
+j9path = r"C:/Users/Alpha/Downloads/ibmopenj9/bin/java.exe"
 
 gbackpath = r"C:/Users/Alpha/Downloads/graalvm-ee-java17-windows-amd64-22.1.0/graalvm-ee-java17-22.1.0/bin/java.exe"
 
-aikar = r'''-Xms4G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1'''
+#----Java Flags-----
+#(Should start with a space)
 
-jflags=r'''-server -Xms4G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+UseStringDeduplication -XX:+UseFastUnorderedTimeStamps -XX:+UseAES -XX:+UseAESIntrinsics -XX:AllocatePrefetchStyle=3 -XX:+UseLoopPredicate -XX:+RangeCheckElimination -XX:+EliminateLocks -XX:+DoEscapeAnalysis -XX:+UseCodeCacheFlushing -XX:+UseFastJNIAccessors -XX:+OptimizeStringConcat -XX:+UseCompressedOops -XX:+UseThreadPriorities -XX:+OmitStackTraceInFastThrow -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseInlineCaches -XX:+RewriteBytecodes -XX:+RewriteFrequentPairs -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseFPUForSpilling -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.CompilerConfiguration=community -Dgraal.SpeculativeGuardMovement=true --add-modules jdk.incubator.vector -XX:+UseFMA -XX:+UseNewLongLShift -XX:+UseXMMForArrayCopy -XX:+UseXmmI2D -XX:+UseXmmI2F -XX:+UseXmmLoadAndClearUpper -XX:+UseXmmRegToRegMoveAll -XX:+UseNewLongLShift -XX:+AlwaysActAsServerClassMachine -XX:+AlignVector -XX:+UseLargePages -XX:LargePageSizeInBytes=2m'''
+aikar = r''' -server -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1'''
 
-gitgflags = r'''-server -Xms4G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=1 -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.TuneInlinerExploration=1 -Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=false -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=false -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dgraal.EarlyGVN=true -Dgraal.StripMineCountedLoops=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true --add-modules jdk.incubator.vector -XX:+UseFMA -XX:+UseLargePages -XX:LargePageSizeInBytes=2m'''
+graal = r''' -server -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=3 -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.TuneInlinerExploration=1 -Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true'''
 
-gflags = r'''-server -Xms4G -Xmx8G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=1 -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.TuneInlinerExploration=1 -Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true --add-modules jdk.incubator.vector -XX:+UseFMA -XX:+UseLargePages -XX:LargePageSizeInBytes=2m'''
+lpages = r''' -XX:+UseLargePages -XX:LargePageSizeInBytes=2m'''
 
-extraflags = r'''-XX:+AlwaysActAsServerClassMachine -XX:JVMCIThreads=8 -XX:+AlignVector -Dgraal.LSRAOptimization=true'''
-
+memory = r''' -Xms4G -Xmx4G'''
 
 #Assemble your testing commands with the above strings
-benchlist = [
-  jdkpath + " " + aikar + " " + commonsuffix,
-  jdkpath + " " + jflags + " " + commonsuffix,
-  graalpath + " " + gitgflags + " " + commonsuffix,
-  gbackpath + " " + gflags + " " + commonsuffix,
-  gbackpath + " " + gflags + " " + extraflags + " " + commonsuffix
-  #gbackpath + " " + gflags + " " + extraflags + " -Dlibgraal.WriteableCodeCache=true " + commonsuffix,
-  #gbackpath + " " + gflags + " " + extraflags + " -Dgraal.LSRAOptimization=true  " + commonsuffix,
-  #gbackpath + " " + gflags + " " + extraflags + " -Dgraal.VectorPolynomialIntrinsics=true -Dgraal.SIMDVectorizationSingletons=true -Dgraal.SIMDVectorizationDirectLoadStore=true " + commonsuffix
-] * 12
 
+javalist = [
+  gbackpath + memory + graal,
+  gbackpath + memory + graal + lpages,
+  jdkpath + aikar,
+  jdkpath + aikar + lpages
+]
 
-#Use seperate paths, or a single path with a length matching the number of commands you are running
+#List of paths, length of list should match java list
 pathlist = [
-  r"C:/Games/atm7"
-] * len(benchlist)
+  r"C:/Games/vevserver"
+] * len(javalist)
 
-chunkgen_command = r"/forge generate 0 0 0 3000"
-chunkgen_expect =  r"Finished generating"
+
+#----Other Options-----
+
+nogui = False
+carpet = 0 #number of simulated carpet players
+chunkgen_command = r"chunky start"
+chunkgen_expect =  r"[Chunky] Task finished for"
 startuptimeout= 600
-chunkgentimeout = 900
-
-#Print stages of when the server starts/runs
-debug = False
-
+chunkgentimeout = 1000
+iterations = 1
+debug = False #Print stages of when the server starts/runs
 
 
 
 
-def benchmark(benchcmd, benchpath, carpet = 0):
+def benchmark(java, mcpath, carpet = 0):
 
   def restore():
     if os.path.isdir("world"):
@@ -62,12 +69,52 @@ def benchmark(benchcmd, benchpath, carpet = 0):
     if os.path.isdir("_worldbackup"):
         os.rename("_worldbackup", "world")  #restore backup
 
+
+  #Init
   spark = False
   chunkgentime = 0
   startuptime = 0
-  #Get a list of mods
+  fabricpath = ""
+  forgepath = ""
+  os.chdir(mcpath)
+  plat = "Linux"
+  if "Windows" in platform.system():
+    plat = "Windows"
+  ngui = ""
+  if nogui:
+    ngui = " nogui"
 
-  os.chdir(benchpath)
+  #Start building the Minecraft command
+  if plat == "Linux":
+    command = "nice -n 20 " + java
+  else:
+    command = java
+
+  #Try to find fabric
+  d = glob.glob("*.jar")
+  for f in d:
+    if "fabric-" in os.path.basename(f):
+      if debug: print("Found Fabric: " + f)
+      command = command + " -jar " + os.path.basename(f)
+      #Delete chunky config if found
+      if os.path.isfile(r"config/chunky.json"):
+        if debug: print("Removing chunky config")
+        os.remove(r"config/chunky.json")
+
+  
+  #Try to find forge
+  d = glob.glob(r"libraries/net/minecraftforge/forge/*/win_args.txt")
+  if len(d) == 1:
+    if debug: print("Found Forge" + d[0])
+    if plat == "Linux":
+      command = command + " @" + os.path.normpath(os.path.join(os.path.dirnamme(d[0]), r"unix_args.txt")) + ngui + r' "$@"'
+    else:
+       command = command + " @" + os.path.normpath(d[0]) + r" %*"
+       if nogui:
+        command = command + " --nogui"
+    
+
+  #Try to find Spark and/or Carpet mods
   if os.path.isdir("mods"):
     mods = glob.glob("mods/*.jar")
     spark = any(s.startswith('spark') for s in mods) #Check for Spark mod
@@ -80,14 +127,30 @@ def benchmark(benchcmd, benchpath, carpet = 0):
   else: 
     if debug: print("No mods folder found")
 
+  #Backup Minecraft world.
   if os.path.isdir("world"):
     if os.path.isdir("_worldbackup"):
       shutil.rmtree("_worldbackup")
     os.rename("world","_worldbackup") #Backup minecraft world
+
+  #Helper function
+  def qw(s):
+    with open("bench.txt", "a") as f:
+      f.write("Startup Time: " + s)
+      f.write("\n")
+      f.write("Chunkgen Time: " + s)
+      f.write("\n")
+
+  #Start Minecraft, wrapping pexpect in a big try since it tends to fail. 
   try:
     start = time.time()
-    child = pexpect.popen_spawn.PopenSpawn(benchcmd, timeout=1200, maxread=2000000,)   #Start Minecraft server
-    if debug: print("Starting server...")
+    with open("bench.txt", "a") as f:
+      f.write("Path: " + mcpath)
+      f.write("\n")
+      f.write("Command: " + command)
+      f.write("\n")
+    child = pexpect.popen_spawn.PopenSpawn(command, timeout=1200, maxread=2000000,)   #Start Minecraft server
+    if debug: print("Starting server: " + command)
     index = child.expect_exact(pattern_list=[r'''! For help, type "help"''', 'Minecraft Crash Report', pexpect.EOF, pexpect.TIMEOUT], timeout=startuptimeout)
     if index == 0:
       if debug: print("Server started")
@@ -95,17 +158,23 @@ def benchmark(benchcmd, benchpath, carpet = 0):
       child.sendline('stop')
       child.kill(signal.SIGTERM)
       restore()
+      qw("CRASH")
       return "CRASH", "CRASH"
     elif index == 2:
       restore()
+      qw("STOPPED")
       return "STOPPED", "STOPPED"
     elif index == 3:
       child.sendline('stop')
       child.kill(signal.SIGTERM)
       restore()
+      qw("TIMEOUT")
       return "TIMEOUT", "TIMEOUT"
     startuptime = time.time() - start
-    time.sleep(20)    #Let the server "settle"
+    with open("bench.txt", "a") as f:
+      f.write("Startup Time: " + str(startuptime))
+      f.write("\n")
+    time.sleep(13)    #Let the server "settle"
     if debug: print("Generating chunks...")
     start = time.time()
     child.sendline(chunkgen_command)   #Generate chunks
@@ -119,21 +188,32 @@ def benchmark(benchcmd, benchpath, carpet = 0):
       chunkgentime = "STOPPED"
     elif index == 3:
       chunkgentime = "TIMEOUT"
-    child.sendline('stop')     #kill the minecraft server
     child.kill(signal.SIGTERM)
-  except Exception as e:
-    print(repr(e))
+    with open("bench.txt", "a") as f:
+      f.write("Chunkgen Time: " + str(chunkgentime))
+      f.write("\n")
+      f.write("\n")
+  except:
+    traceback.print_exc()
+    restore()
+    print("Exiting!")
+    sys.exit()
   restore()
   return chunkgentime, startuptime
 
-logging.basicConfig(filename='minecraftbench.log', encoding='utf-8', level=logging.DEBUG)
-logging.info("Benchark started at " + str(datetime.datetime.now()))
-for (bench,path) in zip(benchlist,pathlist):
-  ctime,stime = benchmark(bench,path)
-  logging.info("Path: " + str(path))
-  logging.info("Command: " + str(bench))
-  print(" ")
-  logging.warning("Startup Time: " + str(stime))
-  logging.warning("Chunk Generation Time:" + str(ctime))
-  print (" ")
-  
+
+#Main thread
+for p in set(pathlist):
+  os.chdir(p)
+  with open("bench.txt", "a") as f:
+    f.write("\n")
+    f.write("---------------------------------------------------------")
+    f.write("\n")
+    f.write("Benchmark started at " + str(datetime.datetime.now()))
+    f.write("\n")
+for x in range(1,iterations + 1):
+  for (path,java) in zip(pathlist,javalist):
+    results = benchmark(java,path)
+    print("Bench completed.")
+  print("Iteration done.")
+print("Done.")  
