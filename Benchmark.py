@@ -2,6 +2,7 @@ import os,time,shutil,glob,logging,datetime,sys,traceback
 import signal
 import platform
 import pexpect
+import psutil
 from pexpect import popen_spawn
 
 
@@ -38,15 +39,12 @@ memory = r''' -Xms4G -Xmx4G'''
 #Forge/Fabric packs only need "java + arguments", as their jars are automatically found
 
 javalist = [
-  gbackpath + memory + graal,
-  gbackpath + memory + graal + lpages,
-  jdkpath + aikar,
-  jdkpath + aikar + lpages
+  gbackpath + memory + graal
 ]
 
 #List of Minecraft paths. The length of this list should be the same as the java list
 pathlist = [
-  r"C:/Games/vevserver"
+  atm7
 ] * len(javalist)
 
 
@@ -54,8 +52,12 @@ pathlist = [
 
 nogui = False
 carpet = 0 #number of simulated carpet players
-chunkgen_command = r"chunky start"
-chunkgen_expect =  r"[Chunky] Task finished for"  #String to look for when chunk generation is finished
+#Fabric
+#chunkgen_command = r"chunky start"                #Chunk generation command to use
+#chunkgen_expect =  r"[Chunky] Task finished for"  #String to look for when chunk generation is finished
+#Forge
+chunkgen_command = r"forge generate 0 0 0 3000"
+chunkgen_expect =  r"Finished generating"
 startuptimeout= 600
 chunkgentimeout = 1000
 iterations = 1
@@ -144,7 +146,7 @@ def benchmark(java, mcpath, carpet = 0):
       f.write("Chunkgen Time: " + s)
       f.write("\n")
 
-  #Start Minecraft, wrapping pexpect in a big try since it tends to fail. 
+  #Start Minecraft, wrapping pexpect in a big try so we can restore world backups
   try:
     start = time.time()
     with open("bench.txt", "a") as f:
@@ -154,6 +156,12 @@ def benchmark(java, mcpath, carpet = 0):
       f.write("\n")
     child = pexpect.popen_spawn.PopenSpawn(command, timeout=1200, maxread=2000000,)   #Start Minecraft server
     if debug: print("Starting server: " + command)
+    time.sleep(0.01)
+    if plat == "Windows":
+      for proc in psutil.process_iter(['pid', 'name']):
+        if "java" in str(proc.name):
+          if debug: print("Setting Priority")
+          proc.nice(psutil.HIGH_PRIORITY_CLASS)
     index = child.expect_exact(pattern_list=[r'''! For help, type "help"''', 'Minecraft Crash Report', pexpect.EOF, pexpect.TIMEOUT], timeout=startuptimeout)
     if index == 0:
       if debug: print("Server started")
