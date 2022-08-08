@@ -5,6 +5,8 @@ import pexpect
 from pexpect import popen_spawn
 
 
+
+
 #----Minecraft Paths-----
 
 atm7 = r"C:/Games/atm7"
@@ -33,6 +35,7 @@ lpages = r''' -XX:+UseLargePages -XX:LargePageSizeInBytes=2m'''
 memory = r''' -Xms4G -Xmx4G'''
 
 #Assemble your testing commands with the above strings
+#Forge/Fabric packs only need "java + arguments", as their jars are automatically found
 
 javalist = [
   gbackpath + memory + graal,
@@ -41,7 +44,7 @@ javalist = [
   jdkpath + aikar + lpages
 ]
 
-#List of paths, length of list should match java list
+#List of Minecraft paths. The length of this list should be the same as the java list
 pathlist = [
   r"C:/Games/vevserver"
 ] * len(javalist)
@@ -52,7 +55,7 @@ pathlist = [
 nogui = False
 carpet = 0 #number of simulated carpet players
 chunkgen_command = r"chunky start"
-chunkgen_expect =  r"[Chunky] Task finished for"
+chunkgen_expect =  r"[Chunky] Task finished for"  #String to look for when chunk generation is finished
 startuptimeout= 600
 chunkgentimeout = 1000
 iterations = 1
