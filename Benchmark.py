@@ -73,6 +73,7 @@ chunkgentimeout = 1000
 iterations = 1
 debug = False #Print stages of when the server starts/runs
 carpet = 20
+forceload_cmd= r"forceload add -48 -48 48 48"
 
 
 
@@ -206,6 +207,8 @@ def benchmark(java, mcpath):
         child.expect_exact(str(x) + " joined the game")
         child.sendline("player " + str(x) + " move forward")
         time.sleep(0.1)
+    child.sendline(forceload_cmd) 
+    time.sleep(1)
     if debug: print("Generating chunks...")
     start = time.time()
     child.sendline(chunkgen_command)   #Generate chunks
