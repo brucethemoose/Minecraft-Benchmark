@@ -27,9 +27,17 @@ gbackpath = r"C:/Users/Alpha/Downloads/graalvm-ee-java17-windows-amd64-22.1.0/gr
 #----Java Flags-----
 #(Should start with a space)
 
-aikar = r''' -server -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1'''
+#GC
+aikar = r''' -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:MaxTenuringThreshold=1'''
 
+shen1 = r'''XX:+UseShenandoahGC -XX:+ParallelRefProcEnabled -XX:ShenandoahGCMode=normal'''
+
+#flags
 graal = r''' -server -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -Dsun.rmi.dgc.server.gcInterval=2147483646 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=3 -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.TuneInlinerExploration=1 -Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true'''
+
+ojdk = r''' -server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+PerfDisableSharedMem -XX:+UseStringDeduplication -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=3 -XX:+OmitStackTraceInFastThrow -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:InlineSmallCode=1000 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.CompilerConfiguration=community -Dgraal.SpeculativeGuardMovement=true'''
+
+experimental = r''' -XX:+EnableVectorAggressiveReboxing -XX:+EnableVectorReboxing -XX:+EnableVectorSupport -XX:+ExplicitGCInvokesConcurrent -XX:+OptimizeFill -XX:+OptoBundling -XX:+OptoScheduling -XX:+UseCharacterCompareIntrinsics -XX:+UseCopySignIntrinsic -XX:+UseCriticalCompilerThreadPriority -XX:+UseCriticalJavaThreadPriority -XX:+UseOptoBiasInlining -XX:+UseVectorStubs'''
 
 lpages = r''' -XX:+UseLargePages -XX:LargePageSizeInBytes=2m'''
 
@@ -39,16 +47,14 @@ memory = r''' -Xms4G -Xmx4G'''
 #Forge/Fabric packs only need "java + arguments", as their jars are automatically found
 
 javalist = [
-  gbackpath + memory + graal + lpages,
-  gbackpath + memory + graal + lpages
+  jdkpath + memory + ojdk + aikar + lpages,
 ]
 
 #List of Minecraft paths. The length of this list should be the same as the java list
 #Forge/Fabric
 pathlist = [
-  atm7,
   vev
-]
+]  * len(javalist)
 
 
 #----Other Options-----
@@ -66,11 +72,11 @@ startuptimeout= 600
 chunkgentimeout = 1000
 iterations = 1
 debug = False #Print stages of when the server starts/runs
+carpet = 20
 
 
 
-
-def benchmark(java, mcpath, carpet = 0):
+def benchmark(java, mcpath):
 
   def restore():
     if os.path.isdir("world"):
@@ -81,6 +87,7 @@ def benchmark(java, mcpath, carpet = 0):
 
   #Init
   spark = False
+  hascarpet = False
   chunkgentime = 0
   startuptime = 0
   chunkgen_command = ""
@@ -130,13 +137,8 @@ def benchmark(java, mcpath, carpet = 0):
   #Try to find Spark and/or Carpet mods
   if os.path.isdir("mods"):
     mods = glob.glob("mods/*.jar")
-    spark = any(s.startswith('spark') for s in mods) #Check for Spark mod
-    if debug: print("Spark: " + str(spark))
-    if any(s.startswith('fabric-carpet') for s in mods):
-      if debug: print("Carpet Players: " + str(carpet))
-    else:
-      carpet = 0
-      if debug: print("Carpet: False")
+    spark = any('spark' in s for s in mods) #Check for Spark mod
+    hascarpet =  any('fabric-carpet' in s for s in mods) 
   else: 
     if debug: print("No mods folder found")
 
@@ -148,7 +150,7 @@ def benchmark(java, mcpath, carpet = 0):
 
   #Helper function
   def qw(s):
-    with open("bench.txt", "a") as f:
+    with open("bench.log", "a") as f:
       f.write("Startup Time: " + s)
       f.write("\n")
       f.write("Chunkgen Time: " + s)
@@ -157,7 +159,7 @@ def benchmark(java, mcpath, carpet = 0):
   #Start Minecraft, wrapping pexpect in a big try so we can restore world backups
   try:
     start = time.time()
-    with open("bench.txt", "a") as f:
+    with open("bench.log", "a") as f:
       f.write("Path: " + mcpath)
       f.write("\n")
       f.write("Command: " + command)
@@ -193,10 +195,17 @@ def benchmark(java, mcpath, carpet = 0):
       qw("TIMEOUT")
       return "TIMEOUT", "TIMEOUT"
     startuptime = time.time() - start
-    with open("bench.txt", "a") as f:
+    with open("bench.log", "a") as f:
       f.write("Startup Time: " + str(startuptime))
       f.write("\n")
-    time.sleep(13)    #Let the server "settle"
+    time.sleep(8)    #Let the server "settle"
+    if hascarpet:
+      print("Spawning players")
+      for x in range(1, carpet + 1):
+        child.sendline("player " + str(x) + " spawn")
+        child.expect_exact(str(x) + " joined the game")
+        child.sendline("player " + str(x) + " move forward")
+        time.sleep(0.1)
     if debug: print("Generating chunks...")
     start = time.time()
     child.sendline(chunkgen_command)   #Generate chunks
@@ -204,6 +213,21 @@ def benchmark(java, mcpath, carpet = 0):
     if index == 0:
       if debug: print("Chunks finished. Stopping server...")
       chunkgentime = time.time() - start
+      if spark:
+        child.sendline("spark health --memory")
+        child.expect_exact("TPS from last 5")
+        child.sendline("spark gc")
+        child.expect_exact("Garbage Collector statistics")
+        time.sleep(0.5) #make sure log is flushed to disk
+        with open("logs/latest.log", "r") as f:
+          with open("bench.log", "a") as f2:
+            i = False
+            for l in f:
+              if "TPS from last 5" in l:
+                i = True
+              if i:
+                if "[" not in l:
+                  f2.write(l)
     elif index == 1:
       chunkgentime = "CRASH"
     elif index == 2:
@@ -211,7 +235,7 @@ def benchmark(java, mcpath, carpet = 0):
     elif index == 3:
       chunkgentime = "TIMEOUT"
     child.kill(signal.SIGTERM)
-    with open("bench.txt", "a") as f:
+    with open("bench.log", "a") as f:
       f.write("Chunkgen Time: " + str(chunkgentime))
       f.write("\n")
       f.write("\n")
@@ -227,7 +251,7 @@ def benchmark(java, mcpath, carpet = 0):
 #Main thread
 for p in set(pathlist):
   os.chdir(p)
-  with open("bench.txt", "a") as f:
+  with open("bench.log", "a") as f:
     f.write("\n")
     f.write("---------------------------------------------------------")
     f.write("\n")
