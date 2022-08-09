@@ -55,23 +55,23 @@ experimental = r''' -XX:+EnableVectorAggressiveReboxing -XX:+EnableVectorReboxin
 
 lpages = r''' -XX:+UseLargePages -XX:LargePageSizeInBytes=2m'''
 
-memory = r''' -Xms6G -Xmx6G'''
+memory = r''' -Xms7G -Xmx7G'''
 
-zmemory =r''' -Xms4G -Xmx8G'''
+zmemory =r''' -Xms4G -Xmx9G'''
 
 #Assemble your testing commands with the above strings
 #Forge/Fabric packs only need "java + arguments", as their jars are automatically found
 
 javalist = [
-  #jdkpath + memory + ojdk + shen1 + lpages,
-  #jdkpath + memory + ojdk + shen2 + lpages,
-  #jdkpath + memory + ojdk + shen3 + lpages,
+  jdkpath + memory + ojdk + shen1 + lpages,
+  jdkpath + memory + ojdk + shen2 + lpages,
+  jdkpath + memory + ojdk + shen3 + lpages,
   jdkpath + memory + ojdk + shen4 + lpages,
   jdkpath + memory + ojdk + shen5 + lpages,
   jdkpath + memory + ojdk + shen6 + lpages,
   jdkpath + zmemory + ojdk + z1 + lpages,
-  jdkpath + zmemory + ojdk + z2 + lpages
- #jdkpath + memory + ojdk + aikar + lpages
+  jdkpath + zmemory + ojdk + z2 + lpages,
+  jdkpath + memory + ojdk + aikar + lpages
 ]
 
 #List of Minecraft paths. The length of this list should be the same as the java list
