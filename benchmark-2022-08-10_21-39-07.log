@@ -1,0 +1,70 @@
+
+
+---------------------------------------------------------
+
+
+
+---------------------------------------------------------
+
+Benchmark started at 2022-08-10 21:39:07.418930
+
+Running 'Graal With No Large Pages' iteration 1: 
+Running 'Graal With No Large Pages' iteration 2: 
+{'Average_CPU_Usage': 31.0,
+ 'Average_Chunkgen_Time': 104.71052086353302,
+ 'Average_GC_Stop_MS': 32.245,
+ 'Average_GC_Stops': 51,
+ 'Average_Memory_Usage_GB': 2.15,
+ 'Average_Oldgen_GCs': 0,
+ 'Average_Startup_Time': 77.79267656803131,
+ 'Average_TPS': 20.0,
+ 'Average_TPS_Values': [20.0, 20.0],
+ 'CPU_Usage': [31.0, 31.0],
+ 'Chunkgen_Times': [103.45004630088806, 105.97099542617798],
+ 'Command': 'C:/Users/Alpha/Downloads/graalvm-ee-java17-windows-amd64-22.1.0/graalvm-ee-java17-22.1.0/bin/java.exe '
+            '-Xms7G -Xmx7G -server -XX:+UnlockExperimentalVMOptions '
+            '-XX:+UnlockDiagnosticVMOptions -XX:+PerfDisableSharedMem '
+            '-XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct '
+            '-XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI '
+            '-XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=3 '
+            '-XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 '
+            '-XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov '
+            '-Djdk.nio.maxCachedBufferSize=262144 '
+            '-Dgraal.TuneInlinerExploration=1 '
+            '-Dgraal.CompilerConfiguration=enterprise '
+            '-Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true '
+            '-Dgraal.OptDuplication=true '
+            '-Dgraal.DetectInvertedLoopsAsCounted=true '
+            '-Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true '
+            '-Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true '
+            '-Dgraal.StripMineNonCountedLoops=true '
+            '-Dgraal.SpeculativeGuardMovement=true '
+            '-Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true '
+            '-Dlibgraal.ExplicitGCInvokesConcurrent=true '
+            '-Dlibgraal.AlwaysPreTouch=true '
+            '-Dlibgraal.ParallelRefProcEnabled=true -XX:+UseG1GC '
+            '-XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 '
+            '-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC '
+            '-XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 '
+            '-XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M '
+            '-XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 '
+            '-XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 '
+            '-XX:G1MixedGCLiveThresholdPercent=90 '
+            '-XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 '
+            '-XX:MaxTenuringThreshold=1',
+ 'GC_Stop_MS': [31.84, 32.65],
+ 'GC_Stops': [51, 51],
+ 'Iterations': 2,
+ 'Memory_Usage': [2.9, 1.4],
+ 'Name': 'Graal With No Large Pages',
+ 'Oldgen_GCs': [0, 0],
+ 'PVariance_CPU_Usage': 0.0,
+ 'PVariance_Chunkgen_Time': 1.5887961230749994,
+ 'PVariance_GC_Stop_MS': 0.16402499999999948,
+ 'PVariance_TPS': 0.0,
+ 'Path': 'C:/Games/vevserver',
+ 'PolyInstance': '',
+ 'Pvariance_Startup_Time': 0.6566529235843888,
+ 'Startup_Times': [76.98233532905579, 78.60301780700684]}
+Running 'Graal With Large Pages' iteration 1: 
+Running 'Graal With Large Pages' iteration 2: 
