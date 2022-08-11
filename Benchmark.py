@@ -257,7 +257,7 @@ def benchmark(i): #"i is the benchmark index"
           time.sleep(0.5) #make sure log is flushed to disk
           with open("logs/latest.log", "r") as f:     #Get spark info from the log
             lines=f.readlines()
-            i = 0
+            iter = 0
             for l in lines:
               if "TPS from last 5" in l:
                 blist[i]["Average_TPS_Values"].append(float(lines[i+1].split(",")[-1][1:-1].split("*")[-1])) #TPS
@@ -270,7 +270,7 @@ def benchmark(i): #"i is the benchmark index"
                 blist[i]["GC_Stops"].append(int(lines[i+1].split("ms avg,")[-1].split("total")[0].strip()))   #GC Stop-the-world info
               if ("G1 Old Generation" in l):
                 blist[i]["Oldgen_GCs"].append(int(lines[i+1].split("collections")[0].strip()))    #G1GC Old Gen collections 
-              i = i + 1
+              iter = iter + 1
       elif index == 1:
         blist[i]["Chunkgen_Times"].append("CRASH")
       elif index == 2:
@@ -304,9 +304,9 @@ with open(benchlog, "a") as f:
   f.write("\n\n---------------------------------------------------------\n\n")
   f.write("\n\n---------------------------------------------------------\n\n")
   f.write("Benchmark started at " + str(datetime.datetime.now()) + "\n\n")
-i = 0
+iter = 0
 for bench in blist:
   benchmark(i)
-  i = i + 1
+  iter = iter + 1
   print("Bench completed.")
 print("All benches completed.")
