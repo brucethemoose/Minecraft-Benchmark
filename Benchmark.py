@@ -186,7 +186,7 @@ def benchmark(i): #"i is the benchmark index"
     blist[i]["Chunkgen_Times"].append(s)
 
   #bench minecraft for # of iterations  
-  for n in range(1, blist[i]["Iterations"]):
+  for n in range(1, blist[i]["Iterations"] + 1):
     #Clear the existing world if there is one
     if os.path.isdir("world"):
         shutil.rmtree("world")
@@ -197,11 +197,10 @@ def benchmark(i): #"i is the benchmark index"
       os.remove(r"config/chunky.json")
 
     #Start Minecraft
-    start = time.time()
     with open(benchlog, "a") as f:
-      f.write(sep)
-      f.write(blist[i]["Name"] + " iteration " + str(n) + ": \n")
-    mcserver = pexpect.popen_spawn.PopenSpawn(command, timeout=totaltimeout, maxread=20000000,)   #Start Minecraft server
+      f.write("Running " + blist[i]["Name"] + " iteration " + str(n) + ": \n")
+    start = time.time()
+    mcserver = pexpect.popen_spawn.PopenSpawn(command, timeout=totaltimeout, maxread=20000000)   #Start Minecraft server
     if debug: print("Starting server: " + command)
     time.sleep(0.01)
     if plat == "Windows":
@@ -234,7 +233,7 @@ def benchmark(i): #"i is the benchmark index"
       blist[i]["Startup_Times"].append(time.time() - start)
       time.sleep(8)    #Let the server "settle"
       if hascarpet:
-        print("Spawning players")
+        if debug: print("Spawning players")
         for x in range(1, carpet + 1):
           mcserver.sendline("player " + str(x) + " spawn")
           mcserver.expect_exact(str(x) + " joined the game")
@@ -248,7 +247,7 @@ def benchmark(i): #"i is the benchmark index"
       index = mcserver.expect_exact(pattern_list=[chunkgen_expect, 'Minecraft Crash Report', pexpect.EOF, pexpect.TIMEOUT], timeout=chunkgentimeout)
       if index == 0:
         if debug: print("Chunks finished. Stopping server...")
-        chunkgentime = time.time() - start
+        blist[i]["Chunkgen_Times"].append(time.time() - start)
         if spark:
           mcserver.sendline("spark health --memory")
           mcserver.expect_exact("TPS from last 5")
@@ -260,16 +259,16 @@ def benchmark(i): #"i is the benchmark index"
             iter = 0
             for l in lines:
               if "TPS from last 5" in l:
-                blist[i]["Average_TPS_Values"].append(float(lines[i+1].split(",")[-1][1:-1].split("*")[-1])) #TPS
+                blist[i]["Average_TPS_Values"].append(float(lines[iter+1].split(",")[-1][1:-1].split("*")[-1])) #TPS
               if "Memory usage:" in l:
-                blist[i]["Memory_Usage"].append(float(lines[i+1].split("GB")[0].strip())) #Memory
+                blist[i]["Memory_Usage"].append(float(lines[iter+1].split("GB")[0].strip())) #Memory
               if "CPU usage" in l:
-                blist[i]["CPU_Usage"].append(float(lines[i+2].split(",")[-1].split(r"%")[0].strip())) #CPU
+                blist[i]["CPU_Usage"].append(float(lines[iter+2].split(",")[-1].split(r"%")[0].strip())) #CPU
               if ("G1 Young Generation" in l) or ("ZGC Pauses collector:" in l) or ("Shenandoah Pauses collector" in l):
-                blist[i]["GC_Stop_MS"].append(float(lines[i+1].split("ms avg")[0].strip()))
-                blist[i]["GC_Stops"].append(int(lines[i+1].split("ms avg,")[-1].split("total")[0].strip()))   #GC Stop-the-world info
+                blist[i]["GC_Stop_MS"].append(float(lines[iter+1].split("ms avg")[0].strip()))
+                blist[i]["GC_Stops"].append(int(lines[iter+1].split("ms avg,")[-1].split("total")[0].strip()))   #GC Stop-the-world info
               if ("G1 Old Generation" in l):
-                blist[i]["Oldgen_GCs"].append(int(lines[i+1].split("collections")[0].strip()))    #G1GC Old Gen collections 
+                blist[i]["Oldgen_GCs"].append(int(lines[iter+1].split("collections")[0].strip()))    #G1GC Old Gen collections 
               iter = iter + 1
       elif index == 1:
         blist[i]["Chunkgen_Times"].append("CRASH")
@@ -278,19 +277,35 @@ def benchmark(i): #"i is the benchmark index"
       elif index == 3:
         blist[i]["Chunkgen_Times"].append("TIMEOUT")
       mcserver.kill(signal.SIGTERM)
+      if debug: pprint.pprint(blist[i])
   #End of iteration loop
-  if blist[i]["Iterations"] > 1:
+  if blist[i]["Iterations"] >= 2:
     def safemean(l):  #average lists while ignoring strings in them
-      return statistics.mean([x for x in l if not isinstance(x, str)])
+      if len(l) > 1:
+        return statistics.mean([x for x in l if not isinstance(x, str)])
+      else:
+        return l[0]
+    def safevar(l):  #average lists while ignoring strings in them
+      if len(l) > 1:
+        return statistics.pvariance([x for x in l if not isinstance(x, str)])
+      else:
+        return "-"
+
     blist[i]["Average_Chunkgen_Time"] = safemean(blist[i]["Chunkgen_Times"])
     blist[i]["Average_Startup_Time"] = safemean(blist[i]["Startup_Times"])
+    blist[i]["PVariance_Chunkgen_Time"] = safevar(blist[i]["Chunkgen_Times"])
+    blist[i]["Pvariance_Startup_Time"] = safevar(blist[i]["Startup_Times"])
     if spark:
       blist[i]["Average_TPS"] = safemean(blist[i]["Average_TPS_Values"])
       blist[i]["Average_GC_Stop_MS"] = safemean(blist[i]["GC_Stop_MS"])
       blist[i]["Average_GC_Stops"] = safemean(blist[i]["GC_Stops"])
-      blist[i]["Average_Oldgen_GCs"] = safemean(blist[i]["Oldgen_GCs"])
       blist[i]["Average_Memory_Usage_GB"] = safemean(blist[i]["Memory_Usage"])
       blist[i]["Average_CPU_Usage"] = safemean(blist[i]["CPU_Usage"])
+      blist[i]["PVariance_TPS"] = safevar(blist[i]["Average_TPS_Values"])
+      blist[i]["PVariance_GC_Stop_MS"] = safevar(blist[i]["GC_Stop_MS"])
+      blist[i]["PVariance_CPU_Usage"] = safevar(blist[i]["CPU_Usage"])
+      if len(blist[i]["Average_Oldgen_GCs"]) > 1:
+        blist[i]["Average_Oldgen_GCs"] = safemean(blist[i]["Oldgen_GCs"])
 
 
   with open(benchlog, "a") as f:
@@ -306,7 +321,7 @@ with open(benchlog, "a") as f:
   f.write("Benchmark started at " + str(datetime.datetime.now()) + "\n\n")
 iter = 0
 for bench in blist:
-  benchmark(i)
+  benchmark(iter)
   iter = iter + 1
   print("Bench completed.")
 print("All benches completed.")
