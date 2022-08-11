@@ -51,6 +51,10 @@ z2 = r''' -XX:+UseZGC -XX:+AlwaysPreTouch -XX:+ParallelRefProcEnabled -XX:+Expli
 #flags
 minimalgraal = r'''-server -XX:+EagerJVMCI'''
 
+somegraal = r''' -server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+PerfDisableSharedMem -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseNUMA -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true'''
+
+moregraal = r''' -server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+PerfDisableSharedMem -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseNUMA -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true -XX:AllocatePrefetchStyle=3 -XX:-DontCompileHugeMethods -XX:ThreadPriorityPolicy=1'''
+
 graal = r''' -server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=3 -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.TuneInlinerExploration=1 -Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true'''
 
 ojdk = r''' -server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+PerfDisableSharedMem -XX:+UseStringDeduplication -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=1 -XX:+OmitStackTraceInFastThrow -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:InlineSmallCode=1000 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.CompilerConfiguration=community -Dgraal.SpeculativeGuardMovement=true'''
@@ -59,7 +63,7 @@ experimental = r''' -XX:+EnableVectorAggressiveReboxing -XX:+EnableVectorReboxin
 
 lpages = r''' -XX:+UseLargePages -XX:LargePageSizeInBytes=2m'''
 
-memory = r''' -Xms7G -Xmx7G'''
+memory = r''' -Xms5G -Xmx5G'''
 
 zmemory =r''' -Xms3G -Xmx9G'''
 
@@ -71,19 +75,33 @@ blist = [
 #Benchmark name, Bechmark command (java + flags),server root directory, polymc instance name (only needed for client benchmarking), # of iterations to run this benchmark
 
   {
-    "Name": "Graal With No Large Pages", 
-    "Command": gbackpath + memory + graal + aikar, 
+    "Name": "Minimal Graal", 
+    "Command": gbackpath + memory + minimalgraal + aikar + lpages,
     "Path": vev, 
     "PolyInstance": "",
-    "Iterations":  3
+    "Iterations":  5
   },
   {
-    "Name": "Graal With Large Pages",
-    "Command": gbackpath + memory + graal + aikar + lpages, 
+    "Name": "Full Graal",
+    "Command": gbackpath + memory + graal + aikar + lpages,
     "Path": vev, 
     "PolyInstance": "",
-    "Iterations":  3
-  }
+    "Iterations":  5
+  },
+  {
+    "Name": "Some Graal",
+    "Command": gbackpath + memory + somegraal + aikar + lpages,
+    "Path": vev, 
+    "PolyInstance": "",
+    "Iterations":  5
+  },
+  {
+    "Name": "Some Graal",
+    "Command": gbackpath + memory + moregraal + aikar + lpages,
+    "Path": vev, 
+    "PolyInstance": "",
+    "Iterations":  5
+  },
 ]
 
 #----------------------Other Options--------------------------
@@ -281,13 +299,19 @@ def benchmark(i): #"i is the benchmark index"
   #End of iteration loop
   if blist[i]["Iterations"] >= 2:
     def safemean(l):  #average lists while ignoring strings in them
+      l = [x for x in l if not isinstance(x, str)]
       if len(l) > 1:
-        return statistics.mean([x for x in l if not isinstance(x, str)])
-      else:
+        return statistics.mean(l)
+      elif len(l) == 1:
         return l[0]
+      else:
+        return "-"
     def safevar(l):  #average lists while ignoring strings in them
+      l = [x for x in l if not isinstance(x, str)]
       if len(l) > 1:
-        return statistics.pvariance([x for x in l if not isinstance(x, str)])
+        return statistics.pvariance(l)
+      elif len(l) == 1:
+        return l[0]
       else:
         return "-"
 
