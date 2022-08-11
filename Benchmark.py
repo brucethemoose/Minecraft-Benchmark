@@ -49,6 +49,8 @@ z1 = r''' -XX:+UseZGC -XX:+AlwaysPreTouch -XX:+ParallelRefProcEnabled -XX:+Expli
 z2 = r''' -XX:+UseZGC -XX:+AlwaysPreTouch -XX:+ParallelRefProcEnabled -XX:+ExplicitGCInvokesConcurrent -XX:ZAllocationSpikeTolerance=7'''
 
 #flags
+minimalgraal = r'''-server -XX:+EagerJVMCI'''
+
 graal = r''' -server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -XX:+EnableJVMCIProduct -XX:+EnableJVMCI -XX:+UseJVMCICompiler -XX:+EagerJVMCI -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=3 -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.TuneInlinerExploration=1 -Dgraal.CompilerConfiguration=enterprise -Dgraal.UsePriorityInlining=true -Dgraal.Vectorization=true -Dgraal.OptDuplication=true -Dgraal.DetectInvertedLoopsAsCounted=true -Dgraal.LoopInversion=true -Dgraal.VectorizeHashes=true -Dgraal.EnterprisePartialUnroll=true -Dgraal.VectorizeSIMD=true -Dgraal.StripMineNonCountedLoops=true -Dgraal.SpeculativeGuardMovement=true -Dgraal.InfeasiblePathCorrelation=true -Dgraal.LoopRotation=true -Dlibgraal.ExplicitGCInvokesConcurrent=true -Dlibgraal.AlwaysPreTouch=true -Dlibgraal.ParallelRefProcEnabled=true'''
 
 ojdk = r''' -server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+PerfDisableSharedMem -XX:+UseStringDeduplication -XX:+UseFastUnorderedTimeStamps -XX:AllocatePrefetchStyle=1 -XX:+OmitStackTraceInFastThrow -XX:+TrustFinalNonStaticFields -XX:ThreadPriorityPolicy=1 -XX:InlineSmallCode=1000 -XX:+UseNUMA -XX:-DontCompileHugeMethods -XX:+UseVectorCmov -Djdk.nio.maxCachedBufferSize=262144 -Dgraal.CompilerConfiguration=community -Dgraal.SpeculativeGuardMovement=true'''
@@ -73,22 +75,16 @@ blist = [
     "Command": gbackpath + memory + graal + aikar, 
     "Path": vev, 
     "PolyInstance": "",
-    "Iterations":  2
+    "Iterations":  3
   },
   {
     "Name": "Graal With Large Pages",
     "Command": gbackpath + memory + graal + aikar + lpages, 
     "Path": vev, 
     "PolyInstance": "",
-    "Iterations":  2
+    "Iterations":  3
   }
 ]
-
-
-#Client benchmarking options (WIP NOT IMPLEMENTED YET)
-client = True #Try to connect to the minecraft server with the specified PolyMC instance
-polypath = "" #Full path to polymc executable file
-frametimec = ""
 
 #----------------------Other Options--------------------------
 
@@ -96,7 +92,7 @@ nogui = False     #Whether to run the dedicated server GUI or not
 carpet = 20 #number of simulated players if the "Carpet" fabric mod is present
 fabric_chunkgen_command = r"chunky start"                 #Chunk generation command to use in fabric packs
 fabric_chunkgen_expect =  r"[Chunky] Task finished for"   #String to look for when chunk generation is finished
-forge_chunkgen_command = r"forge generate 0 0 0 3000"     #Chunk generation command to use in fabric packs
+forge_chunkgen_command = r"forge generate 0 0 0 3000"     #Chunk generation command to use in forge packs
 forge_chunkgen_expect =  r"Finished generating"           ##String to look for when chunk generation is finished
 startuptimeout= 350 #Number of seconds to wait before considering the server to be dead/stuck
 chunkgentimeout = 600 #Number of seconds to wait for chunk generation before considering the server to be dead/stuck 
@@ -104,6 +100,10 @@ totaltimeout = 1200 #Number of seconds the whole server can run before timing ou
 forceload_cmd= r"forceload add -72 -72 72 72" #Command to forceload a rectangle. Can also be some other server console command. 
 debug = False #Print stages of when the server starts/runs
 
+#Client benchmarking options (WIP NOT IMPLEMENTED YET)
+client = False #Try to connect to the minecraft server with the specified PolyMC instance
+polypath = "" #Full path to polymc executable file
+frametimec = ""
 
 
 
@@ -123,8 +123,7 @@ def benchmark(i): #"i is the benchmark index"
   #Init
   spark = False
   hascarpet = False
-  chunkgentime = 0
-  startuptime = 0
+  g1gc = False
   chunkgen_command = ""
   chunkgen_expect = ""
   os.chdir(blist[i]["Path"])
@@ -198,7 +197,7 @@ def benchmark(i): #"i is the benchmark index"
 
     #Start Minecraft
     with open(benchlog, "a") as f:
-      f.write("Running " + blist[i]["Name"] + " iteration " + str(n) + ": \n")
+      f.write("Running '" + blist[i]["Name"] + "' iteration " + str(n) + ": \n")
     start = time.time()
     mcserver = pexpect.popen_spawn.PopenSpawn(command, timeout=totaltimeout, maxread=20000000)   #Start Minecraft server
     if debug: print("Starting server: " + command)
@@ -268,6 +267,7 @@ def benchmark(i): #"i is the benchmark index"
                 blist[i]["GC_Stop_MS"].append(float(lines[iter+1].split("ms avg")[0].strip()))
                 blist[i]["GC_Stops"].append(int(lines[iter+1].split("ms avg,")[-1].split("total")[0].strip()))   #GC Stop-the-world info
               if ("G1 Old Generation" in l):
+                g1gc = True
                 blist[i]["Oldgen_GCs"].append(int(lines[iter+1].split("collections")[0].strip()))    #G1GC Old Gen collections 
               iter = iter + 1
       elif index == 1:
@@ -304,8 +304,9 @@ def benchmark(i): #"i is the benchmark index"
       blist[i]["PVariance_TPS"] = safevar(blist[i]["Average_TPS_Values"])
       blist[i]["PVariance_GC_Stop_MS"] = safevar(blist[i]["GC_Stop_MS"])
       blist[i]["PVariance_CPU_Usage"] = safevar(blist[i]["CPU_Usage"])
-      if len(blist[i]["Average_Oldgen_GCs"]) > 1:
-        blist[i]["Average_Oldgen_GCs"] = safemean(blist[i]["Oldgen_GCs"])
+      if g1gc:
+        if len(blist[i]["Oldgen_GCs"]) > 1:
+          blist[i]["Average_Oldgen_GCs"] = safemean(blist[i]["Oldgen_GCs"])
 
 
   with open(benchlog, "a") as f:
@@ -325,3 +326,5 @@ for bench in blist:
   iter = iter + 1
   print("Bench completed.")
 print("All benches completed.")
+
+#Do stuff with the data in blist here.
